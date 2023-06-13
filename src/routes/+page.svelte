@@ -1,16 +1,19 @@
 <script>
-  import { onMount } from 'svelte';
-  // import { browser } from "$app/environment";
-  import { page } from '$app/stores';
+  import { onMount } from 'svelte'
+  // import { browser } from "$app/environment"
+  import { page } from '$app/stores'
   import { Bee } from "@ethersphere/bee-js"
   const bee = new Bee('https://api.gateway.ethswarm.org')
 
   let text =""
   onMount(async () => {
+    window.global ||= window
     const searchParams = $page.url.searchParams
     let ref = searchParams.get("ref")
-    let res = await bee.downloadFile(ref)
-    text = res.data.text()
+    if (ref) {
+      let res = await bee.downloadFile(ref)
+      text = res.data.text()
+    }
 	});
 
   const paste = async (message) => {
@@ -20,7 +23,6 @@
       body: message,
       headers: {
         'Content-Type': 'text/plain;',
-        
       },
     })
     const json = await res.json()
